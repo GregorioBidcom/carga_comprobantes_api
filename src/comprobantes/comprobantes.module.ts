@@ -5,9 +5,11 @@ import { ComprobantesController } from "./comprobantes.controller";
 import { ComprobanteService } from "./comprobantes.service";
 import { Module } from "@nestjs/common";
 import { Comprobante_items } from "./entities/comprobantes-items.entity";
+import { Producto_Movimiento } from "./entities/productos-movimientos.entity";
+import { Despacho } from "./entities/despachos.entity";
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Comprobante, Comprobante_items])],
+    imports: [TypeOrmModule.forFeature([Comprobante, Despacho, Comprobante_items, Producto_Movimiento])],
     controllers: [ComprobantesController],
     providers: [ComprobanteService],
 })
