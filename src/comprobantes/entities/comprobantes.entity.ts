@@ -3,14 +3,16 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { Comprobante_items } from './comprobantes-items.entity';
 import { Producto_Movimiento } from './productos-movimientos.entity';
 import { Despacho } from './despachos.entity';
+import { CC_Movimientos } from './cc-movimientos.entity';
 
 
 @Entity({name: 'comprobantes'})
 export class Comprobante{
 
     constructor() {
-        this.comprobantes_items = []
+        this.comprobanteItems = []
         this.productos_movimiento = []
+        this.CCMovimientos = []
     }
     
     @PrimaryGeneratedColumn()
@@ -104,8 +106,9 @@ export class Comprobante{
     @Column()
     Order_ID_Producteca : string
 
-    comprobantes_items : Comprobante_items[]
+    comprobanteItems : Comprobante_items[]
     productos_movimiento : Producto_Movimiento[]
-    
+    CCMovimientos : CC_Movimientos[]
+
     despacho : Despacho
 }

@@ -24,4 +24,11 @@ export class ComprobantesController{
     ){
         return this.compService.createComprobante(newComprobante)    
     }
+
+    @Post('editarComprobante')
+    editComprobante(
+        @Body() editComprobante: Comprobante
+    ){
+        return this.compService.editarComprobante(editComprobante)    
+    }
 }
