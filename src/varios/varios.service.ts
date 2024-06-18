@@ -57,6 +57,6 @@ export class VariosService{
 
     async getOperaciones(): Promise<Operacion[]> {
       return
-    }
+    } 
 
 }
