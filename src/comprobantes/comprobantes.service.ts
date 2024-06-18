@@ -31,7 +31,6 @@ export class ComprobanteService{
                 idComprobante: idComprobante
             }
         });
-
         if (pComprobante){
             //Si existe el comprobante, busco los items del mismo
             const pCompItems = await this.compItemRepository.find({
@@ -39,45 +38,37 @@ export class ComprobanteService{
                     idComprobante : idComprobante
                 }
             })
-
             pCompItems.forEach(item => {
                 pComprobante.comprobanteItems.push(item)
             });
             //Cargo el despacho
-
             const pDespacho = await this.compDespachoRepository.findOne({
                 where:{
                     idComprobante : idComprobante
                 }
             })
-
             if (pDespacho){
                 //Si tiene despacho se lo añado
                 pComprobante.despacho = pDespacho
             }
-
             //Cargo los cc_movimientos
             const pCCMovimientos = await this.compCCMovRepository.find({
                 where:{
                     idComprobante : idComprobante
                 }
             })
-
             for (const pMov of pCCMovimientos){
                 const pCCMovimientosCampos = await this.compCCMovCamposRepository.findOne({
                     where:{
                         idCCMovimiento : pMov.idCCMovimiento
                     }
                 })
-
                 if (pCCMovimientosCampos){
                     //Si tiene ccMovCampos se lo añado al pMov
                     pMov.CCMovimientoCampo = pCCMovimientosCampos
                 }
-
                 pComprobante.CCMovimientos.push(pMov)
             }
-
             return pComprobante
         }
         else{
@@ -175,7 +166,6 @@ export class ComprobanteService{
 
         //======================== ACTUALIZO despachos si tiene ========================
         if (editarComprobante.despacho){            
-            console.log("EDITO EL DESPACHO PAPU")
             await this.compDespachoRepository.update({ idDespacho: editarComprobante.despacho.idDespacho }, editarComprobante.despacho);
         }
 
@@ -244,7 +234,7 @@ export class ComprobanteService{
   // POST Comprobantes -- Comprobantes-items -- productos-movimientos
   async createComprobante(newComprobante: Comprobante) {
     try {
-      // Utilizar el EntityManager para la transacción
+      // EntityManager para la transacción
       return await this.compRepository.manager.transaction(async (entityManager: EntityManager) => {
         // Creamos el comprobante
         const pNewComp = entityManager.create(Comprobante, newComprobante);

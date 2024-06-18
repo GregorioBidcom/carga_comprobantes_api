@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ComprobantesModule } from './comprobantes/comprobantes.module';
 import 'dotenv/config'; //Con esto defino las variables de entorno de mi archivo .env en el proyecto
+import { VariosModule } from './varios/varios.module';
 
 @Module({
   imports: [TypeOrmModule.forRoot({
@@ -17,7 +18,7 @@ import 'dotenv/config'; //Con esto defino las variables de entorno de mi archivo
     entities: [__dirname + '/**/*.entity.{js, ts}'], //Esto hace que tome todos los archivos .entity.ts o .js del proyecto
     synchronize: false,
   }), 
-  ComprobantesModule],
+  ComprobantesModule,VariosModule],
   controllers: [AppController],
   providers: [AppService],
 })
