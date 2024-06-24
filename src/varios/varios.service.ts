@@ -6,13 +6,15 @@ import { Repository, EntityManager, In, Like, Not, And, IsNull  } from "typeorm"
 import { Fuentes_Venta } from "./entitites/fuentes_venta.entity";
 import { Fuentes_Venta_Cierre } from "./entitites/fuentes_venta_cierre.entity";
 import { Operacion } from "./entitites/operaciones.entity";
+import { ProductosVoluminosos } from "./entitites/productos_voluminosos.entity";
 
 @Injectable()
 export class VariosService{
 
-    constructor(@InjectRepository(Fuentes_Venta) public fuentesVentaRepository: Repository<Fuentes_Venta>,
-                @InjectRepository(Fuentes_Venta_Cierre) public fuentesVentaCierreRepository: Repository<Fuentes_Venta_Cierre>,
-                @InjectRepository(Operacion) public operacionesRepository: Repository<Operacion>) {}
+    constructor(@InjectRepository(Fuentes_Venta, 'cnnPres') public fuentesVentaRepository: Repository<Fuentes_Venta>,
+                @InjectRepository(Fuentes_Venta_Cierre, 'cnnPres') public fuentesVentaCierreRepository: Repository<Fuentes_Venta_Cierre>,
+                @InjectRepository(Operacion, 'cnnPres') public operacionesRepository: Repository<Operacion>,
+                @InjectRepository(ProductosVoluminosos, 'cnnChk') public prodVoluminososRepository: Repository<ProductosVoluminosos>) {}
 
     async getFuentesVentas(nombreOperacion: string = ''): Promise<Fuentes_Venta[]> {
       // Construimos la consulta inicial con la condición de fechaBajaVenta null
@@ -55,8 +57,45 @@ export class VariosService{
       return pFuentesVentaCierre;
     }
 
-    async getOperaciones(): Promise<Operacion[]> {
+    async getOperaciones(): Promise<Operacion[]> { 
       return
     } 
+
+    async getProductosVoluminosos(pWhere: string): Promise<ProductosVoluminosos[]> {
+      //Esta query esta fea, habria que optimizarla
+      const query = `
+        (
+          SELECT
+            p.ID,
+            p.post_status,
+            p.codigo_aguila AS SKU,
+            p.ean,
+            p.tipo_envio,
+            p.voluminoso,
+            'p' AS t
+          FROM bidcom.posts AS p
+          WHERE ${pWhere}
+        )
+        UNION DISTINCT
+        (
+          SELECT
+            IFNULL(m.post_id, p.ID) AS ID,
+            p.post_status,
+            m.codigo_aguila AS SKU,
+            m.ean,
+            IFNULL(p.tipo_envio, '') AS tipo_envio,
+            IFNULL(p.voluminoso, 0) AS voluminoso,
+            'm' AS t
+          FROM bidcom.models AS m
+          LEFT JOIN bidcom.posts AS p ON p.ID = m.post_id
+          WHERE ${pWhere}
+        )
+        ORDER BY SKU;
+      `;
+  
+      const pVoluminosos: ProductosVoluminosos[] = await this.prodVoluminososRepository.query(query);
+      return pVoluminosos;
+    }
+
 
 }
