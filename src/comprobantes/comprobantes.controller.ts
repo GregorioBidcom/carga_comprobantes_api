@@ -1,25 +1,35 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { Comprobante } from './entities/comprobantes.entity';
 import { ComprobanteService } from './comprobantes.service';
 
 @Controller('comprobantes')
 export class ComprobantesController {
-    constructor(private compService: ComprobanteService) {
+    constructor(private service: ComprobanteService) {
     }
 
-    @Get(':idComprobante') readComprobante(
-        @Param('idComprobante') idComprobante: number,
+    @Get(':id') getOne(
+        @Param('id') id: number,
     ): Promise<Comprobante[]> {
-        return this.compService.getOneComprobante(idComprobante);
+        return this.service.getOne(id);
     }
 
-    @Post('nuevoComprobante')
-    createComprobante(@Body() newComprobante: Comprobante) {
-        return this.compService.createComprobante(newComprobante);
+    @Post('')
+    create(@Body() newComprobante: Comprobante) { // Aca en vez de usar la entity deberia usar un DTO con los campos esperado en la request
+//createComprobante(@Body() comprobanteRequest: ComprobanteDto) {
+        return this.service.create(newComprobante);
     }
 
     @Post('editarComprobante')
     editComprobante(@Body() editComprobante: Comprobante) {
-        return this.compService.editarComprobante(editComprobante);
+        return this.service.editarComprobante(editComprobante);
     }
+
+    // Editar comprobante lo editaria totalmente de esta forma:
+    // Puede ser un PUT o Patch
+    //@Put(':id')
+    //updateComprobante(
+    //    @Param('id') id: number,
+    //) {
+    //    return this.service.update;
+    //}
 }
