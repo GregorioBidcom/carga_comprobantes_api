@@ -45,7 +45,14 @@ export class ComprobanteService {
             where: {
                 idComprobante: id,
             },
-        });
+        }); // que significa pComprobante?
+
+
+        // si el comprobante no fue encontrado deberia retornar un error no?
+        //throw new Error('Comprobante not found')
+        // Entonces la condicion if (pComprobante) ya no es necesaria    
+
+
         if (pComprobante) {
             //Si existe el comprobante, busco los items del mismo
             const pCompItems = await this.compItemRepository.find({
